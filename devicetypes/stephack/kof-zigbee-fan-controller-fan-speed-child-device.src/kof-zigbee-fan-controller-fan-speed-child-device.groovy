@@ -21,11 +21,9 @@ metadata {
         capability "Sensor" 
         capability "Momentary"
         
-   }     
-
-
-	tiles(scale: 2) {    	
-	
+   }
+   
+   tiles(scale: 2) {
 		standardTile("switch", "switch", width: 2, height: 2) {
      		state "default", label:"Push", action: "on", icon:"https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Fan175xfinal.png", backgroundColor: "#ffffff", nextState: "turningOn"
 			state "on", label: "on", action: "off", icon:"https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Fan175xfinal.png", backgroundColor: "#336600", nextState: "turningOff"
@@ -37,7 +35,6 @@ metadata {
     
 	}
 }
-
 
 def on() {
 	push()        
@@ -53,24 +50,6 @@ log.info "CHILD PUSH RECEIVED"
 	sendEvent(name: "switch", value: "off", isStateChange: true, displayed: false)
 	sendEvent(name: "momentary", value: "pushed", isStateChange: true)
     
-	def myChildId = device.deviceNetworkId
-	def myParentId = parent.deviceNetworkId
-
-	switch(myChildId) {
-		case "${myParentId}-1":
-    		parent.fanOne()
-    	break
-    	case "${myParentId}-2":
-    		parent.fanTwo()
-    	break
-    	case "${myParentId}-3":
-    		parent.fanThree()
-   		break
-    	case "${myParentId}-4":
-    		parent.fanFour()
-    	break
-    	case "${myParentId}-5":
-    		parent.fanAuto()
-      	break               
-	}        
+    parent.fanChildOn(device.deviceNetworkId)    
+	       
 }

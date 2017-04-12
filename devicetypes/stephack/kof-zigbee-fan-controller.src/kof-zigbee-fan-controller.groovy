@@ -32,6 +32,7 @@ metadata {
         command "lightOn"
         command "lightOff"
         command "lightLevel"
+        command "fanChildOn"
         
         attribute "fanMode", "string"
         attribute "lightBrightness", "number"    
@@ -278,6 +279,35 @@ def configure() {
 	  "send 0x${device.deviceNetworkId} 1 1", "delay 100"
 	]
     return cmd + refresh()
+}
+
+def fanChildOn(String dni) {
+log.info "FANCHILDON RUN"
+	def myParentId = device.deviceNetworkId
+	switch(dni) {
+		case "${myParentId}-1":
+    		fanOne()
+    	break
+    	case "${myParentId}-2":
+    		fanTwo()
+    	break
+    	case "${myParentId}-3":
+    		fanThree()
+   		break
+    	case "${myParentId}-4":
+    		fanFour()
+    	break
+    	case "${myParentId}-5":
+    		fanAuto()
+      	break               
+	} 
+}
+
+//to be used as we update DTH
+def fanChildOff(String dni) {
+log.info "FANCHILDOFF RUN"
+	def myParentId = device.deviceNetworkId
+    
 }
 
 def on() {
