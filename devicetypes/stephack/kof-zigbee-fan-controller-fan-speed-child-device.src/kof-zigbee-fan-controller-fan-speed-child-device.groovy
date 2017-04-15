@@ -19,13 +19,13 @@ metadata {
         capability "Switch"
         capability "Light"
         capability "Sensor" 
-        capability "Momentary"
+      
         
    }
    
    tiles(scale: 2) {
 		standardTile("switch", "switch", width: 2, height: 2) {
-     		state "default", label:"Push", action: "on", icon:"https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Fan175xfinal.png", backgroundColor: "#ffffff", nextState: "turningOn"
+     		state "off", label:"off", action: "on", icon:"https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Fan175xfinal.png", backgroundColor: "#ffffff", nextState: "turningOn"
 			state "on", label: "on", action: "off", icon:"https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Fan175xfinal.png", backgroundColor: "#336600", nextState: "turningOff"
         	state "turningOn", label:"ADJUST", action: "", icon:"https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Fan175xfinal.png", backgroundColor: "#2179b8"        	 
 		}     	
@@ -36,20 +36,12 @@ metadata {
 	}
 }
 
-def on() {
-	push()        
-}
-
 def off() {
-	push()         
+	parent.off()       
 }
 
-def push() {
-log.info "CHILD PUSH RECEIVED"
-	sendEvent(name: "switch", value: "on", isStateChange: true, displayed: false)
-	sendEvent(name: "switch", value: "off", isStateChange: true, displayed: false)
-	sendEvent(name: "momentary", value: "pushed", isStateChange: true)
-    
-    parent.fanChildOn(device.deviceNetworkId)    
+def on() {
+	log.info "CHILD ${getDataValue('speedVal')} TURNED ON"    
+    parent.setFanSpeed(getDataValue("speedVal"))    
 	       
 }
