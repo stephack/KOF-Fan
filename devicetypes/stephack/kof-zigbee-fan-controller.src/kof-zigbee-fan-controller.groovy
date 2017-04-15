@@ -24,15 +24,10 @@ metadata {
         capability "Polling"
         capability "Health Check"
    
-        command "fanOne"
-        command "fanTwo"
-        command "fanThree"
-        command "fanFour"
-        command "fanAuto"
         command "lightOn"
         command "lightOff"
         command "lightLevel"
-        command "fanChildOn"
+        command "setFanSpeed"
         
         attribute "fanMode", "string"
         attribute "lightBrightness", "number"    
@@ -54,12 +49,12 @@ metadata {
     tiles(scale: 2) {    	
 	multiAttributeTile(name: "switch", type: "lighting", width: 6, height: 4) {        	
 		tileAttribute ("fanMode", key: "PRIMARY_CONTROL") {			
-			attributeState "fanFour", label:"HIGH", action:"off", icon:"st.Lighting.light24", backgroundColor:"#33ff00", nextState: "turningOff"
-			attributeState "fanThree", label:"MED-HI", action:"off", icon:"st.Lighting.light24", backgroundColor:"#33cc00", nextState: "turningOff"
-			attributeState "fanTwo", label:"MED", action:"off", icon:"st.Lighting.light24", backgroundColor:"#339900", nextState: "turningOff"
-			attributeState "fanOne", label:"LOW", action:"off", icon:"st.Lighting.light24", backgroundColor:"#336600", nextState: "turningOff"
-			attributeState "fanAuto", label:"BREEZE", action:"off", icon:"st.Lighting.light24", backgroundColor:"#00A0DC", nextState: "turningOff"
-        	attributeState "fanOff", label:"FAN OFF", action:"on", icon:"st.Lighting.light24", backgroundColor:"#ffffff", nextState: "turningOn"
+			attributeState "04", label:"HIGH", action:"off", icon:"st.Lighting.light24", backgroundColor:"#33ff00", nextState: "turningOff"
+			attributeState "03", label:"MED-HI", action:"off", icon:"st.Lighting.light24", backgroundColor:"#33cc00", nextState: "turningOff"
+			attributeState "02", label:"MED", action:"off", icon:"st.Lighting.light24", backgroundColor:"#339900", nextState: "turningOff"
+			attributeState "01", label:"LOW", action:"off", icon:"st.Lighting.light24", backgroundColor:"#336600", nextState: "turningOff"
+			attributeState "06", label:"BREEZE", action:"off", icon:"st.Lighting.light24", backgroundColor:"#00A0DC", nextState: "turningOff"
+        	attributeState "00", label:"FAN OFF", action:"on", icon:"st.Lighting.light24", backgroundColor:"#ffffff", nextState: "turningOn"
 			attributeState "turningOn", action:"on", label:"TURNING ON", icon:"st.Lighting.light24", backgroundColor:"#2179b8", nextState: "turningOn"
 			attributeState "turningOff", action:"off", label:"TURNING OFF", icon:"st.Lighting.light24", backgroundColor:"#2179b8", nextState: "turningOff"
         }  
@@ -82,8 +77,6 @@ metadata {
 		state "default", label:"", action:"refresh.refresh", icon:"st.secondary.refresh"
 	}
   	
-    valueTile("blank", "blank"){ }
-    
     childDeviceTiles("fanSpeeds")
     //childDeviceTile("fanM", "fanMode1", width: 6, height: 1)
     
@@ -111,7 +104,7 @@ def parse(String description) {
                 log.info event
             	//find light child device
                 def childDevice = getChildDevices()?.find {
-        				it.device.deviceNetworkId == "${device.deviceNetworkId}-6" 
+        				it.device.deviceNetworkId == "${device.deviceNetworkId}-Lamp" 
                 }
                 //send light events to light child device and update lightBrightness attribute
                 childDevice.sendEvent(event)
@@ -127,14 +120,16 @@ def parse(String description) {
 				// Fan Control Cluster Attribute Read Response               
                 log.info descMap
 				if (descMap.cluster == "0202" && descMap.attrId == "0000") {
-                	log.info "FAN - READ - MODE"
+                	log.info "FAN - READ - MODE"                    
 					map.name = "fanMode"
-					map.value = getFanModeMap()[descMap.value]
+					map.value = descMap.value
+                    fanSync(descMap.value)
 				} 
 			}	// End of Read Attribute Response
-			def result = null          
+			def result = null            
             if (map) {
-            	log.info "FAN - CREATE EVENT"                
+            	log.info "FAN - CREATE EVENT"   
+                
 				result = createEvent(map)                
 			}
 			log.debug "Parse returned $map"          	          
@@ -145,36 +140,29 @@ def parse(String description) {
         log.info "EXIT PARSE"        
 }
 
-def getFanModeMap() { 
-	[
-    "00":"fanOff",
-    "01":"fanOne",
-    "02":"fanTwo",
-    "03":"fanThree",
-	"04":"fanFour",
-	"06":"fanAuto"
-	]
-}
-
 def getFanName() { 
 	[  
-    1:"LOW",
-    2:"MEDIUM",
-    3:"MEDIUM HIGH",
-	4:"HIGH",
-    5:"BREEZE",
-    6:"LAMP"   
+    "00":"OFF",
+    "01":"LOW",
+    "02":"MEDIUM",
+    "03":"MEDIUM HIGH",
+	"04":"HIGH",
+    "05":"OFF",
+    "06":"BREEZE",
+    "07":"LAMP"
 	]
 }
 
 def getFanNameAbbr() { 
 	[  
-    1:"LOW",
-    2:"MED",
-    3:"MED-HI",
-	4:"HI",
-    5:"BREEZE",
-    6:"LAMP"   
+    "00":"OFF",
+    "01":"LOW",
+    "02":"MED",
+    "03":"MED-HI",
+	"04":"HI",
+    "05":"OFF",
+    "06":"BREEZE",
+    "07":"LAMP"
 	]
 }
 
@@ -205,13 +193,13 @@ def initialize() {
 }
 
 def createFanChild() {
-	for(i in 1..5) {
+	for(i in 1..6) {
    		log.info "create FanChild Loop ${i}"
     	def childDevice = getChildDevices()?.find {
-        	it.device.deviceNetworkId == "${device.deviceNetworkId}-${i}"
+        	it.device.deviceNetworkId == "${device.deviceNetworkId}-0${i}"
     	}                 
-        if (!childDevice) {        
-        	childDevice = addChildDevice("KOF Zigbee Fan Controller - Fan Speed Child Device", "${device.deviceNetworkId}-${i}", null,[completedSetup: true, label: "${device.displayName} ${getFanName()[i]}", isComponent: true, componentName: "fanMode${i}", componentLabel: "Fan Speed ${getFanNameAbbr()[i]}"])
+        if (!childDevice && i != 5) {        
+        	childDevice = addChildDevice("KOF Zigbee Fan Controller - Fan Speed Child Device", "${device.deviceNetworkId}-0${i}", null,[completedSetup: true, label: "${device.displayName} ${getFanName()["0${i}"]}", isComponent: true, componentName: "fanMode${i}", componentLabel: "Fan Speed ${getFanNameAbbr()["0${i}"]}", "data":["speedVal":"0${i}"]])
         	response(refresh() + configure())
            	log.info "Creating child fan mode ${childDevice}"  
 		}
@@ -224,10 +212,10 @@ def createFanChild() {
 def createLightChild() {
 	log.info "create LightChild"
 	def childDevice = getChildDevices()?.find {
-        	it.device.deviceNetworkId == "${device.deviceNetworkId}-6"
+        	it.device.deviceNetworkId == "${device.deviceNetworkId}-Lamp"
     }
     if (!childDevice) {  
-		childDevice = addChildDevice("KOF Zigbee Fan Controller - Light Child Device", "${device.deviceNetworkId}-6", null,[completedSetup: true, label: "${device.displayName} ${getFanName()[6]}", isComponent: true, componentName: "fanLight", componentLabel: "${getFanNameAbbr()[6]}"])
+		childDevice = addChildDevice("KOF Zigbee Fan Controller - Light Child Device", "${device.deviceNetworkId}-Lamp", null,[completedSetup: true, label: "${device.displayName} LAMP", isComponent: true, componentName: "fanLight", componentLabel: "Fan LAMP"])
         response(refresh() + configure())
         log.info "Creating child light ${childDevice}" 
     }
@@ -238,18 +226,22 @@ def createLightChild() {
 
 def deleteChildren() {
 	log.info "delete  all Child"
-    for (i in 1..6) {
-    	log.info "delete children Loop ${i}"
-    	def childDevice = getChildDevices()?.find {
-        	it.device.deviceNetworkId == "${device.deviceNetworkId}-${i}"
-    	}
-		if (childDevice) {        
-    		childDevice = deleteChildDevice("${device.deviceNetworkId}-${i}")
-        	//childDevice.refresh()
+    //for (i in 1..6) {
+    	//log.info "delete children Loop ${i}"
+    	def children = getChildDevices()//?.find {
+        	//it.device.deviceNetworkId == "${device.deviceNetworkId}-0${i}"
+    	//}
+        children.each {child->
+        	deleteChildDevice(child.deviceNetworkId)
+        }
+		//if (childDevice) {        
+    	//	childDevice = deleteChildDevice("${device.deviceNetworkId}-0${i}")
+        	
         	response(refresh() + configure())
         	log.info "Deleting child ${childDevice}"
-        }
-	}
+        //}
+	//}
+    //write code to delete light child
 }
 
 def configure() {
@@ -281,50 +273,18 @@ def configure() {
     return cmd + refresh()
 }
 
-def fanChildOn(String dni) {
-log.info "FANCHILDON RUN"
-	def myParentId = device.deviceNetworkId
-	switch(dni) {
-		case "${myParentId}-1":
-    		fanOne()
-    	break
-    	case "${myParentId}-2":
-    		fanTwo()
-    	break
-    	case "${myParentId}-3":
-    		fanThree()
-   		break
-    	case "${myParentId}-4":
-    		fanFour()
-    	break
-    	case "${myParentId}-5":
-    		fanAuto()
-      	break               
-	} 
-}
-
-//to be used as we update DTH
-def fanChildOff(String dni) {
-log.info "FANCHILDOFF RUN"
-	def myParentId = device.deviceNetworkId
-    
-}
-
 def on() {
-	log.info "FAN ON RUN"
-    //resumes previous fanspeed
-	def lastFan =  device.currentValue("lastFanMode")
-	return "$lastFan"()
+	log.info "FAN ON RUN"   
+	def lastFan =  device.currentValue("lastFanMode")	 //resumes previous fanspeed
+	return setFanSpeed("$lastFan")
     
 }
 
 def off() {
 	log.info "FAN OFF RUN"
-    //save fanspeed before turning off so it can be resumed when turned back on
-	def fanNow = device.currentValue("fanMode")
-    //do not save lastfanmode if fan is currently off
-    if(fanNow != "fanOff") sendEvent("name":"lastFanMode", "value":fanNow)  
-	log.info "${device.deviceNetworkId}"
+    def fanNow = device.currentValue("fanMode")    //save fanspeed before turning off so it can be resumed when turned back on
+    if(fanNow != "00") sendEvent("name":"lastFanMode", "value":fanNow)  //do not save lastfanmode if fan is already off
+    //write code to sendevent off to all fan children
 	def cmds=[
 	"st wattr 0x${device.deviceNetworkId} 1 0x202 0 0x30 {00}"
     ]
@@ -347,49 +307,31 @@ def lightLevel(val) {
     zigbee.setLevel(val) + (val?.toInteger() > 0 ? zigbee.on() : []) 
 }
 
-def fanAuto() {
-	log.info "FAN AUTO RUN"
+def setFanSpeed(speed) {
+	log.info "SETFANSPEED RUN"   
     def cmds=[
-	"st wattr 0x${device.deviceNetworkId} 1 0x202 0 0x30 {06}"
+	"st wattr 0x${device.deviceNetworkId} 1 0x202 0 0x30 {${speed}}"
     ]
-    log.info "Turning On Breeze mode"    
-    return cmds    
+    log.info "Adjusting Fan Speed to "+ getFanName()[speed]    
+    return cmds
 }
 
-def fanOne() {
-	log.info "FAN 1 RUN"
-    def cmds=[
-	"st wattr 0x${device.deviceNetworkId} 1 0x202 0 0x30 {01}"
-    ]
-    log.info "Setting fan speed to One"
-    return cmds    
-}
-
-def fanTwo() { 
-	log.info "FAN 2 RUN"
-    def cmds=[
-	"st wattr 0x${device.deviceNetworkId} 1 0x202 0 0x30 {02}"
-    ]
-    log.info "Setting fan speed to Two"
-    return cmds    
-}
-
-def fanThree() {
-	log.info "FAN 3 RUN"
-    def cmds=[
-	"st wattr 0x${device.deviceNetworkId} 1 0x202 0 0x30 {03}"
-    ]
-    log.info "Setting fan speed to Three"
-    return cmds    
-}
-
-def fanFour() {
-	log.info "FAN 4 RUN"
-    def cmds=[
-	"st wattr 0x${device.deviceNetworkId} 1 0x202 0 0x30 {04}"
-    ]
-    log.info "Setting fan speed to Four"    
-    return cmds    
+def fanSync(whichFan) {
+	log.info "FANSYNC RUN"
+	def children = getChildDevices()
+   	children.each {child->
+       	def childSpeedVal = child.getDataValue('speedVal')
+        if(childSpeedVal == whichFan) {
+           	child.sendEvent(name:"switch",value:"on")
+        }
+        else {            	
+           	if(childSpeedVal!=null){ 
+           		log.info childSpeedVal
+           		child.sendEvent(name:"switch",value:"off")
+           	}
+        }
+   	}    	
+    
 }
 
 def ping() {
