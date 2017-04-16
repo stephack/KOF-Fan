@@ -274,7 +274,7 @@ def fanSync(whichFan) {
         }
         else {            	
            	if(childSpeedVal!=null){ 
-           		log.info childSpeedVal
+           		//log.info childSpeedVal
            		child.sendEvent(name:"switch",value:"off")
            	}
         }
