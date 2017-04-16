@@ -79,7 +79,7 @@ def parse(String description) {
                 sendEvent(event)
         	}
         	else {
-            	//log.info "LIGHT - SEND EVENT"
+            	log.info "Light event detected on controller"
                 //log.info event
             	def childDevice = getChildDevices()?.find {		//find light child device
         				it.device.deviceNetworkId == "${device.deviceNetworkId}-Lamp" 
@@ -89,7 +89,7 @@ def parse(String description) {
         	}        
     	}
 		else {
-        	//log.info "ENTER FAN"
+        	log.info "Fan event detected on controller"
 			def map = [:]
 			if (description?.startsWith("read attr -")) {
             	//log.info "FAN - READ"
