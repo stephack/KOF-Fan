@@ -3,6 +3,8 @@
  *
  *  Copyright 2017 Stephan Hackett
  *
+ * 	Authors: Ranga Pedamallu/Dale Coffing/Stephan Hackett
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  *  in compliance with the License. You may obtain a copy of the License at:
  *
@@ -14,7 +16,7 @@
  *
  */
 metadata {
-	definition (name: "KOF Zigbee Fan Controller", namespace: "stephack", author: "Stephan Hackett") {
+	definition (name: "KOF Zigbee Fan Controller", namespace: "stephack", author: "Stephan Hackett, Ranga Pedamallu, Dale Coffing") {
 		capability "Actuator"
         capability "Configuration"
         capability "Refresh"
@@ -69,7 +71,7 @@ metadata {
 }
 
 def parse(String description) {
-		log.debug "Parse description $description"           
+		//log.debug "Parse description $description"           
         def event = zigbee.getEvent(description)
     	if (event) {
         	//log.info "ENTER LIGHT"
@@ -79,8 +81,7 @@ def parse(String description) {
                 sendEvent(event)
         	}
         	else {
-            	log.info "Light event detected on controller"
-                //log.info event
+            	log.info "Light event detected on controller: ${event}"
             	def childDevice = getChildDevices()?.find {		//find light child device
         				it.device.deviceNetworkId == "${device.deviceNetworkId}-Lamp" 
                 }                
@@ -95,7 +96,7 @@ def parse(String description) {
             	//log.info "FAN - READ"
 				def descMap = zigbee.parseDescriptionAsMap(description)
 				// Fan Control Cluster Attribute Read Response               
-                log.info descMap
+                //log.info descMap
 				if (descMap.cluster == "0202" && descMap.attrId == "0000") {                	                  
 					map.name = "fanMode"
 					map.value = descMap.value
