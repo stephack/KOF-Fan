@@ -23,17 +23,25 @@ metadata {
    }     
 
 
-	tiles(scale: 2) {    	
-	
-		standardTile("switch", "switch", width: 2, height: 2) {
-     		state "off", label:"off", action: "on", icon:"https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Light175xfinal.png", backgroundColor: "#ffffff", nextState: "on"
-			state "on", label: "on", action: "off", icon:"https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Light175xfinal.png", backgroundColor: "#00A0DC", nextState: "off"        	
-		}     	
+	tiles(scale: 2) { 		
+        multiAttributeTile(name:"switch", type: "lighting", width: 6, height: 4, canChangeIcon: true) {
+    		tileAttribute ("switch", key: "PRIMARY_CONTROL") {
+        		attributeState "off", label:"off", action: "on", icon:"https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Light175xfinal.png", backgroundColor: "#ffffff", nextState: "on"
+				attributeState "on", label: "on", action: "off", icon:"https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Light175xfinal.png", backgroundColor: "#00A0DC", nextState: "off"
+        	}    	
+    		tileAttribute ("device.level", key: "SLIDER_CONTROL") {
+        		attributeState "level", action: "setLevel"
+    		}
+    	}
+    
+        
+        
+		 	
     
     	main(["switch"])        
 		details(["switch"])    
-    
-	}
+    }
+	
 }
 
 
