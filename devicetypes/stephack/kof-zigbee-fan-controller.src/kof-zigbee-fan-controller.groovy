@@ -15,6 +15,8 @@
  *  for the specific language governing permissions and limitations under the License.
  *
  */
+def version() {return "v0.2.1.20170419" }
+
 metadata {
 	definition (name: "KOF Zigbee Fan Controller", namespace: "stephack", author: "Stephan Hackett, Ranga Pedamallu, Dale Coffing") {
 		capability "Actuator"
@@ -40,7 +42,7 @@ metadata {
     
     preferences {
     	page(name: "childToRebuild", title: "This does not display on DTH preference page")
-            section("section") {            	
+            section("section") {              
             	input(name: "clearChildren", type: "bool", title: "Delete all child devices?\n\nPlease note: Devices must be removed from any smartApps BEFORE attempting to delete.")                      
        }
     }
@@ -63,10 +65,15 @@ metadata {
 	}  	  
    	standardTile("refresh", "refresh", decoration: "flat", width: 2, height: 2) {
 		state "default", label:"", action:"refresh.refresh", icon:"st.secondary.refresh"
-	}  	
+	}  
+    valueTile("version", "version", width:4, height:2) {
+    	state "version", label:"Beta\n\n" + version()
+    }
+       
     childDeviceTiles("fanSpeeds")
+    
 	main(["switch"])        
-	details(["switch", "fanSpeeds", "refresh"])
+	details(["switch", "fanSpeeds", "refresh", "version"])
 	}
 }
 
@@ -163,7 +170,7 @@ def createFanChild() {
         	it.device.deviceNetworkId == "${device.deviceNetworkId}-0${i}"
     	}                 
         if (!childDevice && i != 5) {        
-        	childDevice = addChildDevice("KOF Zigbee Fan Controller - Fan Speed Child Device", "${device.deviceNetworkId}-0${i}", null,[completedSetup: true, label: "${device.displayName} ${getFanName()["0${i}"]}", isComponent: true, componentName: "fanMode${i}", componentLabel: "Fan Speed ${getFanNameAbbr()["0${i}"]}", "data":["speedVal":"0${i}"]])
+        	childDevice = addChildDevice("KOF Zigbee Fan Controller - Fan Speed Child Device", "${device.deviceNetworkId}-0${i}", null,[completedSetup: true, label: "${device.displayName} ${getFanName()["0${i}"]}", isComponent: true, componentName: "fanMode${i}", componentLabel: "Fan Speed ${getFanNameAbbr()["0${i}"]}", "data":["speedVal":"0${i}","parent version":version()]])
         	response(refresh() + configure())
            	log.info "Creating child fan mode ${childDevice}"  
 		}
@@ -173,12 +180,12 @@ def createFanChild() {
 	}
 }
 
-def createLightChild() {	
+def createLightChild() {
 	def childDevice = getChildDevices()?.find {
         	it.device.deviceNetworkId == "${device.deviceNetworkId}-Lamp"
     }
     if (!childDevice) {  
-		childDevice = addChildDevice("KOF Zigbee Fan Controller - Light Child Device", "${device.deviceNetworkId}-Lamp", null,[completedSetup: true, label: "${device.displayName} LAMP", isComponent: false, componentName: "fanLight", componentLabel: "Fan LAMP"])
+		childDevice = addChildDevice("KOF Zigbee Fan Controller - Light Child Device", "${device.deviceNetworkId}-Lamp", null,[completedSetup: true, label: "${device.displayName} LAMP", isComponent: false, componentName: "fanLight", componentLabel: "Fan LAMP", "data":["parent version":version()]])
         response(refresh() + configure())
         log.info "Creating child light ${childDevice}" 
     }
@@ -270,16 +277,18 @@ def fanSync(whichFan) {
 	def children = getChildDevices()
    	children.each {child->
        	def childSpeedVal = child.getDataValue('speedVal')
-        if(childSpeedVal == whichFan) {
+        if(childSpeedVal == whichFan) {	//send ON event to corresponding child fan
            	child.sendEvent(name:"switch",value:"on")
+            sendEvent(name:"switch",value:"on") //send ON event to Fan Parent
         }
         else {            	
            	if(childSpeedVal!=null){ 
            		//log.info childSpeedVal
-           		child.sendEvent(name:"switch",value:"off")
+           		child.sendEvent(name:"switch",value:"off")	//send OFF event to all other child fans
            	}
         }
-   	}    	
+   	}
+    if(whichFan == "00") sendEvent(name:"switch",value:"off") //send OFF event to Fan Parent
     
 }
 
