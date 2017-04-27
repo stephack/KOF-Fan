@@ -71,11 +71,11 @@ metadata {
     valueTile("version", "version", width:4, height:2) {
     	state "version", label:"Beta\n\n" + version()
     }
-    valueTile("FchildVer", "FchildVer", width:3, height:2) {
-    	state "FchildVer", label: "Fan Child\n\n"+'${currentValue}'
+    valueTile("FchildVer", "FchildVer", width:3, height:1) {
+    	state "FchildVer", label: "Fan Child\n"+'${currentValue}'
     }
-    valueTile("LchildVer", "LchildVer", width:3, height:2) {
-    	state "LchildVer", label:"Light Child\n\n"+'${currentValue}'
+    valueTile("LchildVer", "LchildVer", width:3, height:1) {
+    	state "LchildVer", label:"Light Child\n"+'${currentValue}'
     }
        
     childDeviceTiles("fanSpeeds")
