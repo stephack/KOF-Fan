@@ -15,7 +15,7 @@
  *  for the specific language governing permissions and limitations under the License.
  *
  */
-def version() {return "v0.2.1.20170419" }
+def version() {return "v0.2.1.20170427" }
 
 metadata {
 	definition (name: "KOF Zigbee Fan Controller", namespace: "stephack", author: "Stephan Hackett, Ranga Pedamallu, Dale Coffing") {
@@ -33,9 +33,11 @@ metadata {
         command "lightLevel"
         command "setFanSpeed"       
         
-        attribute "fanMode", "string"
-        attribute "lightBrightness", "number"    
-        attribute "lastFanMode", "string"        
+        attribute "fanMode", "string" //stores fanspeed
+        attribute "lightBrightness", "number"    //stores brightness level
+        attribute "lastFanMode", "string"	//used to restore previous fanmode
+        attribute "LchildVer", "string"		//stores light child version
+        attribute "FchildVer", "string"		//stores fan child version
       
 	fingerprint profileId: "0104", inClusters: "0000, 0003, 0004, 0005, 0006, 0008, 0202", outClusters: "0003, 0019", model: "HDC52EastwindFan"
     }
@@ -54,7 +56,7 @@ metadata {
 			attributeState "03", label:"MED-HI", action:"off", icon:"st.Lighting.light24", backgroundColor:"#669c1c", nextState: "turningOff"
 			attributeState "02", label:"MED", action:"off", icon:"st.Lighting.light24", backgroundColor:"#79b821", nextState: "turningOff"
 			attributeState "01", label:"LOW", action:"off", icon:"st.Lighting.light24", backgroundColor:"#8ad424", nextState: "turningOff"
-			attributeState "06", label:"BREEZE", action:"off", icon:"st.Lighting.light24", backgroundColor:"#00A0DC", nextState: "turningOff"
+			attributeState "06", label:"BREEZE", action:"off", icon:"st.Lighting.light24", backgroundColor:"#008B64", nextState: "turningOff"
         	attributeState "00", label:"FAN OFF", action:"on", icon:"st.Lighting.light24", backgroundColor:"#ffffff", nextState: "turningOn"
 			attributeState "turningOn", action:"on", label:"TURNING ON", icon:"st.Lighting.light24", backgroundColor:"#2179b8", nextState: "turningOn"
 			attributeState "turningOff", action:"off", label:"TURNING OFF", icon:"st.Lighting.light24", backgroundColor:"#2179b8", nextState: "turningOff"
@@ -69,12 +71,18 @@ metadata {
     valueTile("version", "version", width:4, height:2) {
     	state "version", label:"Beta\n\n" + version()
     }
+    valueTile("FchildVer", "FchildVer", width:3, height:2) {
+    	state "FchildVer", label: "Fan Child\n\n"+'${currentValue}'
+    }
+    valueTile("LchildVer", "LchildVer", width:3, height:2) {
+    	state "LchildVer", label:"Light Child\n\n"+'${currentValue}'
+    }
        
     childDeviceTiles("fanSpeeds")
     //childDeviceTile("fanMode1", "fanMode1", height: 1, width: 6)
     
 	main(["switch"])        
-	details(["switch", "fanSpeeds", "refresh", "version"])
+	details(["switch", "fanSpeeds", "refresh", "version", "FchildVer", "LchildVer"])
 	}
 }
 
@@ -171,7 +179,9 @@ def createFanChild() {
         	it.device.deviceNetworkId == "${device.deviceNetworkId}-0${i}"
     	}                 
         if (!childDevice && i != 5) {        
-        	childDevice = addChildDevice("KOF Zigbee Fan Controller - Fan Speed Child Device", "${device.deviceNetworkId}-0${i}", null,[completedSetup: true, label: "${device.displayName} ${getFanName()["0${i}"]}", isComponent: true, componentName: "fanMode${i}", componentLabel: "Speed - ${getFanNameAbbr()["0${i}"]}", "data":["speedVal":"0${i}","parent version":version()]])
+        	childDevice = addChildDevice("KOF Zigbee Fan Controller - Fan Speed Child Device", "${device.deviceNetworkId}-0${i}", null,[completedSetup: true,
+            label: "${device.displayName} ${getFanName()["0${i}"]}", isComponent: true, componentName: "fanMode${i}",
+            componentLabel: "Speed - ${getFanNameAbbr()["0${i}"]}", "data":["speedVal":"0${i}","parent version":version()]])
         	response(refresh() + configure())
            	log.info "Creating child fan mode ${childDevice}"  
 		}
@@ -186,7 +196,9 @@ def createLightChild() {
         	it.device.deviceNetworkId == "${device.deviceNetworkId}-Lamp"
     }
     if (!childDevice) {  
-		childDevice = addChildDevice("KOF Zigbee Fan Controller - Light Child Device", "${device.deviceNetworkId}-Lamp", null,[completedSetup: true, label: "${device.displayName} Lamp", isComponent: false, componentName: "fanLight", componentLabel: "Lamp", "data":["parent version":version()]])
+		childDevice = addChildDevice("KOF Zigbee Fan Controller - Light Child Device", "${device.deviceNetworkId}-Lamp", null,[completedSetup: true,
+        label: "${device.displayName} Lamp", isComponent: false, componentName: "fanLight",
+        componentLabel: "Lamp", "data":["parent version":version()]])
         response(refresh() + configure())
         log.info "Creating child light ${childDevice}" 
     }
@@ -298,5 +310,19 @@ def ping() {
 }
 
 def refresh() {	
-    zigbee.onOffRefresh() + zigbee.levelRefresh() + zigbee.readAttribute(0x0202, 0x0000)
+	getChildVer()
+	zigbee.onOffRefresh() + zigbee.levelRefresh() + zigbee.readAttribute(0x0202, 0x0000)
+}
+
+
+def getChildVer() {
+	def FchildDevice = getChildDevices()?.find {
+        	it.device.deviceNetworkId == "${device.deviceNetworkId}-01"
+    	}                 
+	sendEvent(name:"FchildVer", value: FchildDevice.version())	//find a fan device, get version info and store in FchildVer
+    
+    def LchildDevice = getChildDevices()?.find {
+        	it.device.deviceNetworkId == "${device.deviceNetworkId}-Lamp"
+    	}                 
+	sendEvent(name:"LchildVer", value: LchildDevice.version())	//find the light device, get version info and store in LchildVer    
 }
