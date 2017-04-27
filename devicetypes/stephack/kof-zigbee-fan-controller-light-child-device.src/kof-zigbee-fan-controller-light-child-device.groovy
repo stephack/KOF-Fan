@@ -13,6 +13,8 @@
  *  for the specific language governing permissions and limitations under the License.
  *
  */
+def version() {return "v0.2.1.20170427"}
+
 metadata {
 	definition (name: "KOF Zigbee Fan Controller - Light Child Device", namespace: "stephack", author: "Stephan Hackett") {
 		capability "Actuator"
@@ -20,30 +22,30 @@ metadata {
         capability "Switch Level"
         capability "Light"
         capability "Sensor" 
-   }     
-
+   }
 
 	tiles(scale: 2) { 		
         multiAttributeTile(name:"switch", type: "lighting", width: 6, height: 4, canChangeIcon: true) {
     		tileAttribute ("switch", key: "PRIMARY_CONTROL") {
-        		attributeState "off", label:"off", action: "on", icon:"https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Light175xfinal.png", backgroundColor: "#ffffff", nextState: "on"
-				attributeState "on", label: "on", action: "off", icon:"https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Light175xfinal.png", backgroundColor: "#00A0DC", nextState: "off"
+        		attributeState "off", label:"off", action: "on", icon: getIcon(), backgroundColor: "#ffffff", nextState: "turningOn"
+				attributeState "on", label: "on", action: "off", icon: getIcon(), backgroundColor: "#00A0DC", nextState: "turningOff"
+                attributeState "turningOn", label:"TURNING ON", action: "on", icon: getIcon(), backgroundColor: "#2179b8", nextState: "turningOn"
+            	attributeState "turningOff", label:"TURNING OFF", action:"off", icon: getIcon(), backgroundColor:"#2179b8", nextState: "turningOff"
         	}    	
     		tileAttribute ("device.level", key: "SLIDER_CONTROL") {
         		attributeState "level", action: "setLevel"
     		}
+            
     	}
-    
-        
-        
-		 	
-    
+                
     	main(["switch"])        
 		details(["switch"])    
-    }
-	
+    }	
 }
 
+def getIcon() {
+	return "https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Light175xfinal.png"
+}
 
 def on() {
 	parent.lightOn()

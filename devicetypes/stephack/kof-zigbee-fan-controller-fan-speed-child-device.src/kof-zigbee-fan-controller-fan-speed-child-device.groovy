@@ -13,27 +13,33 @@
  *  for the specific language governing permissions and limitations under the License.
  *
  */
+def version() {return "v0.2.1.20170427"}
+
 metadata {
 	definition (name: "KOF Zigbee Fan Controller - Fan Speed Child Device", namespace: "stephack", author: "Stephan Hackett") {
 		capability "Actuator"
         capability "Switch"
         capability "Light"
-        capability "Sensor" 
-      
+        capability "Sensor"        
         
    }
    
    tiles(scale: 2) {
 		standardTile("switch", "switch", width: 2, height: 2) {
-     		state "off", label:"off", action: "on", icon:"https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Fan175xfinal.png", backgroundColor: "#ffffff", nextState: "turningOn"
-			state "on", label: "on", action: "off", icon:"https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Fan175xfinal.png", backgroundColor: "#79b821", nextState: "turningOff"
-        	state "turningOn", label:"ADJUST", action: "", icon:"https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Fan175xfinal.png", backgroundColor: "#2179b8"        	 
-		}     	
+     		state "off", label:"off", action: "on", icon: getIcon(), backgroundColor: "#ffffff", nextState: "turningOn"
+			state "on", label: "on", action: "off", icon: getIcon(), backgroundColor: "#79b821", nextState: "turningOff"
+        	state "turningOn", label:"ADJUSTING", action: "on", icon: getIcon(), backgroundColor: "#2179b8", nextState: "turningOn"
+            state "turningOff", label:"TURNING OFF", action:"off", icon: getIcon(), backgroundColor:"#2179b8", nextState: "turningOff"
+		}
     
     	main(["switch"])        
 		details(["switch"])    
     
 	}
+}
+
+def getIcon() {
+	return "https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Fan175xfinal.png"
 }
 
 def off() {
