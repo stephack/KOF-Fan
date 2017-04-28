@@ -52,11 +52,11 @@ metadata {
     tiles(scale: 2) {    	
 	multiAttributeTile(name: "switch", type: "lighting", width: 6, height: 4) {        	
 		tileAttribute ("fanMode", key: "PRIMARY_CONTROL") {			
-			attributeState "04", label:"HIGH", action:"off", icon:"st.Lighting.light24", backgroundColor:"#558216", nextState: "turningOff"
-			attributeState "03", label:"MED-HI", action:"off", icon:"st.Lighting.light24", backgroundColor:"#669c1c", nextState: "turningOff"
-			attributeState "02", label:"MED", action:"off", icon:"st.Lighting.light24", backgroundColor:"#79b821", nextState: "turningOff"
-			attributeState "01", label:"LOW", action:"off", icon:"st.Lighting.light24", backgroundColor:"#8ad424", nextState: "turningOff"
-			attributeState "06", label:"BREEZE", action:"off", icon:"st.Lighting.light24", backgroundColor:"#008B64", nextState: "turningOff"
+			attributeState "04", label:"HIGH", action:"off", icon:"https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed04.png", backgroundColor:"#558216", nextState: "turningOff"
+			attributeState "03", label:"MED-HI", action:"off", icon:"https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed03.png", backgroundColor:"#669c1c", nextState: "turningOff"
+			attributeState "02", label:"MED", action:"off", icon:"https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed02.png", backgroundColor:"#79b821", nextState: "turningOff"
+			attributeState "01", label:"LOW", action:"off", icon:"https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed01.png", backgroundColor:"#8ad424", nextState: "turningOff"
+			attributeState "06", label:"BREEZE", action:"off", icon:"https://raw.githubusercontent.com/dcoffing/KOF-CeilingFan/master/resources/images/Breeze.png", backgroundColor:"#008B64", nextState: "turningOff"
         	attributeState "00", label:"FAN OFF", action:"on", icon:"st.Lighting.light24", backgroundColor:"#ffffff", nextState: "turningOn"
 			attributeState "turningOn", action:"on", label:"TURNING ON", icon:"st.Lighting.light24", backgroundColor:"#2179b8", nextState: "turningOn"
 			attributeState "turningOff", action:"off", label:"TURNING OFF", icon:"st.Lighting.light24", backgroundColor:"#2179b8", nextState: "turningOff"
@@ -65,16 +65,16 @@ metadata {
 			attributeState "lightBrightness", action:"lightLevel"
 		}
 	}
-    standardTile("refresh", "refresh", decoration: "flat", width: 2, height: 2) {
+    standardTile("refresh", "refresh", decoration: "flat", width: 3, height: 3) {
 		state "default", label:"", action:"refresh.refresh", icon:"st.secondary.refresh"
 	}  
-    valueTile("version", "version", width:2, height:1) {
+    valueTile("version", "version", width:3, height:1) {
     	state "version", label:"Parent\n" + version()
     }
-    valueTile("FchildVer", "FchildVer", width:2, height:1) {
+    valueTile("FchildVer", "FchildVer", width:3, height:1) {
     	state "FchildVer", label: "Fan Child\n"+'${currentValue}'
     }
-    valueTile("LchildVer", "LchildVer", width:2, height:1) {
+    valueTile("LchildVer", "LchildVer", width:3, height:1) {
     	state "LchildVer", label:"Light Child\n"+'${currentValue}'
     }
        
@@ -82,7 +82,7 @@ metadata {
     //childDeviceTile("fanMode1", "fanMode1", height: 1, width: 6)
     
 	main(["switch"])        
-	details(["switch", "fanSpeeds", "version", "FchildVer", "LchildVer", "refresh"])
+	details(["switch", "fanSpeeds", "refresh", "version", "FchildVer", "LchildVer"])
 	}
 }
 
@@ -133,7 +133,7 @@ def getFanName() {
     "00":"OFF",
     "01":"LOW",
     "02":"MEDIUM",
-    "03":"MEDIUM HIGH",
+    "03":"MEDIUM-HIGH",
 	"04":"HIGH",
     "05":"OFF",
     "06":"BREEZE",
@@ -143,13 +143,13 @@ def getFanName() {
 
 def getFanNameAbbr() { 
 	[  
-    "00":"[ OFF ]",
-    "01":"[ LOW ]",
-    "02":"[ MED ]",
-    "03":"[ MED-HI ]",
-	"04":"[ HI ]",
-    "05":"[ OFF ]",
-    "06":"[ BREEZE ]",
+    "00":"OFF",
+    "01":"LOW",
+    "02":"MED",
+    "03":"MED-HI",
+	"04":"HI",
+    "05":"OFF",
+    "06":"BREEZE",
     "07":"LAMP"
 	]
 }
@@ -162,7 +162,7 @@ def updated() {
 	initialize()
 }
 
-def initialize() {
+def initialize() {	
 	log.info "Initializing"
     if(clearChildren) {
     	deleteChildren()        
@@ -181,7 +181,7 @@ def createFanChild() {
         if (!childDevice && i != 5) {        
         	childDevice = addChildDevice("KOF Zigbee Fan Controller - Fan Speed Child Device", "${device.deviceNetworkId}-0${i}", null,[completedSetup: true,
             label: "${device.displayName} ${getFanName()["0${i}"]}", isComponent: true, componentName: "fanMode${i}",
-            componentLabel: "Speed - ${getFanNameAbbr()["0${i}"]}", "data":["speedVal":"0${i}","parent version":version()]])
+            componentLabel: "${getFanName()["0${i}"]} Speed", "data":["speedVal":"0${i}","parent version":version()]])
         	response(refresh() + configure())
            	log.info "Creating child fan mode ${childDevice}"  
 		}
@@ -198,7 +198,7 @@ def createLightChild() {
     if (!childDevice) {  
 		childDevice = addChildDevice("KOF Zigbee Fan Controller - Light Child Device", "${device.deviceNetworkId}-Lamp", null,[completedSetup: true,
         label: "${device.displayName} Lamp", isComponent: false, componentName: "fanLight",
-        componentLabel: "Lamp", "data":["parent version":version()]])
+        componentLabel: "LAMP", "data":["parent version":version()]])
         response(refresh() + configure())
         log.info "Creating child light ${childDevice}" 
     }
