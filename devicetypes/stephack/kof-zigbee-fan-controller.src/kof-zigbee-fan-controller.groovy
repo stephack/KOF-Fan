@@ -15,7 +15,7 @@
  *  for the specific language governing permissions and limitations under the License.
  *
  */
-def version() {return "v0.2.1.20170427" }
+def version() {return "v0.2.1.20170428" }
 
 metadata {
 	definition (name: "KOF Zigbee Fan Controller", namespace: "stephack", author: "Stephan Hackett, Ranga Pedamallu, Dale Coffing") {
@@ -63,18 +63,18 @@ metadata {
         }  
         tileAttribute ("lightBrightness", key: "SLIDER_CONTROL") {
 			attributeState "lightBrightness", action:"lightLevel"
-		}         
+		}
 	}
     standardTile("refresh", "refresh", decoration: "flat", width: 2, height: 2) {
 		state "default", label:"", action:"refresh.refresh", icon:"st.secondary.refresh"
 	}  
-    valueTile("version", "version", width:4, height:2) {
-    	state "version", label:"Beta\n\n" + version()
+    valueTile("version", "version", width:2, height:1) {
+    	state "version", label:"Parent\n" + version()
     }
-    valueTile("FchildVer", "FchildVer", width:3, height:1) {
+    valueTile("FchildVer", "FchildVer", width:2, height:1) {
     	state "FchildVer", label: "Fan Child\n"+'${currentValue}'
     }
-    valueTile("LchildVer", "LchildVer", width:3, height:1) {
+    valueTile("LchildVer", "LchildVer", width:2, height:1) {
     	state "LchildVer", label:"Light Child\n"+'${currentValue}'
     }
        
@@ -82,7 +82,7 @@ metadata {
     //childDeviceTile("fanMode1", "fanMode1", height: 1, width: 6)
     
 	main(["switch"])        
-	details(["switch", "fanSpeeds", "refresh", "version", "FchildVer", "LchildVer"])
+	details(["switch", "fanSpeeds", "version", "FchildVer", "LchildVer", "refresh"])
 	}
 }
 
@@ -319,10 +319,10 @@ def getChildVer() {
 	def FchildDevice = getChildDevices()?.find {
         	it.device.deviceNetworkId == "${device.deviceNetworkId}-01"
     	}                 
-	sendEvent(name:"FchildVer", value: FchildDevice.version())	//find a fan device, get version info and store in FchildVer
+	if(FchildDevice){sendEvent(name:"FchildVer", value: FchildDevice.version())}	//find a fan device, get version info and store in FchildVer
     
     def LchildDevice = getChildDevices()?.find {
         	it.device.deviceNetworkId == "${device.deviceNetworkId}-Lamp"
     	}                 
-	sendEvent(name:"LchildVer", value: LchildDevice.version())	//find the light device, get version info and store in LchildVer    
+	if(LchildDevice) {sendEvent(name:"LchildVer", value: LchildDevice.version())}	//find the light device, get version info and store in LchildVer    
 }
