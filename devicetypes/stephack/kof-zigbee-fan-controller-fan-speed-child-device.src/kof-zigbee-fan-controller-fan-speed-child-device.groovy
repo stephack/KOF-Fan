@@ -39,7 +39,7 @@ metadata {
 }
 
 def getIcon() {
-	return "https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/Fan175xfinal.png"
+	return "https://raw.githubusercontent.com/dcoffing/KOF-CeilingFan/master/resources/images/Fan.png"
 }
 
 def off() {
