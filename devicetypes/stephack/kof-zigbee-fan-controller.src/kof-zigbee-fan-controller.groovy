@@ -52,10 +52,10 @@ metadata {
     tiles(scale: 2) {    	
 	multiAttributeTile(name: "switch", type: "lighting", width: 6, height: 4) {        	
 		tileAttribute ("fanMode", key: "PRIMARY_CONTROL") {			
-			attributeState "04", label:"HIGH", action:"off", icon:"https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed04.png", backgroundColor:"#558216", nextState: "turningOff"
-			attributeState "03", label:"MED-HI", action:"off", icon:"https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed03.png", backgroundColor:"#669c1c", nextState: "turningOff"
+			attributeState "04", label:"HIGH", action:"off", icon:"https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed04.png", backgroundColor:"#79b821", nextState: "turningOff"
+			attributeState "03", label:"MED-HI", action:"off", icon:"https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed03.png", backgroundColor:"#79b821", nextState: "turningOff"
 			attributeState "02", label:"MED", action:"off", icon:"https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed02.png", backgroundColor:"#79b821", nextState: "turningOff"
-			attributeState "01", label:"LOW", action:"off", icon:"https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed01.png", backgroundColor:"#8ad424", nextState: "turningOff"
+			attributeState "01", label:"LOW", action:"off", icon:"https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed01.png", backgroundColor:"#79b821", nextState: "turningOff"
 			attributeState "06", label:"BREEZE", action:"off", icon:"https://raw.githubusercontent.com/dcoffing/KOF-CeilingFan/master/resources/images/Breeze.png", backgroundColor:"#008B64", nextState: "turningOff"
         	attributeState "00", label:"FAN OFF", action:"on", icon:"st.Lighting.light24", backgroundColor:"#ffffff", nextState: "turningOn"
 			attributeState "turningOn", action:"on", label:"TURNING ON", icon:"st.Lighting.light24", backgroundColor:"#2179b8", nextState: "turningOn"
