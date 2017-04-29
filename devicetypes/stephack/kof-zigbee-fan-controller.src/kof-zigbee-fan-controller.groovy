@@ -133,10 +133,10 @@ def getFanName() {
     "00":"OFF",
     "01":"LOW",
     "02":"MEDIUM",
-    "03":"MEDIUM-HIGH",
+    "03":"MED-HI",
 	"04":"HIGH",
     "05":"OFF",
-    "06":"BREEZE",
+    "06":"BREEZE MODE",
     "07":"LAMP"
 	]
 }
@@ -170,7 +170,8 @@ def initialize() {
     else {
 		createFanChild()
     	createLightChild()
-    }    
+    } 
+    response(refresh() + configure())
 }
 
 def createFanChild() {
@@ -181,8 +182,8 @@ def createFanChild() {
         if (!childDevice && i != 5) {        
         	childDevice = addChildDevice("KOF Zigbee Fan Controller - Fan Speed Child Device", "${device.deviceNetworkId}-0${i}", null,[completedSetup: true,
             label: "${device.displayName} ${getFanName()["0${i}"]}", isComponent: true, componentName: "fanMode${i}",
-            componentLabel: "${getFanName()["0${i}"]} Speed", "data":["speedVal":"0${i}","parent version":version()]])
-        	response(refresh() + configure())
+            componentLabel: "${getFanName()["0${i}"]}", "data":["speedVal":"0${i}","parent version":version()]])
+        	//response(refresh() + configure())
            	log.info "Creating child fan mode ${childDevice}"  
 		}
        	else {
@@ -292,12 +293,14 @@ def fanSync(whichFan) {
        	def childSpeedVal = child.getDataValue('speedVal')
         if(childSpeedVal == whichFan) {	//send ON event to corresponding child fan
            	child.sendEvent(name:"switch",value:"on")
+            child.sendEvent(name:"fanSpeed", value:"on${childSpeedVal}")	//custom icon code
             sendEvent(name:"switch",value:"on") //send ON event to Fan Parent
         }
         else {            	
            	if(childSpeedVal!=null){ 
            		//log.info childSpeedVal
            		child.sendEvent(name:"switch",value:"off")	//send OFF event to all other child fans
+                child.sendEvent(name:"fanSpeed", value:"off${childSpeedVal}")	//custom icon code
            	}
         }
    	}
