@@ -44,7 +44,7 @@ metadata {
 }
 
 def getIcon() {
-	return "https://raw.githubusercontent.com/dcoffing/KOF-CeilingFan/master/resources/images/Light.png"
+	return "https://raw.githubusercontent.com/dcoffing/KOF-CeilingFan/master/resources/images/lighth.png"
 }
 
 def on() {
