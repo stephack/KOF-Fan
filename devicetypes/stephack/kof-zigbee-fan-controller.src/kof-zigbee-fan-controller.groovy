@@ -45,21 +45,21 @@ metadata {
     preferences {
     	page(name: "childToRebuild", title: "This does not display on DTH preference page")
             section("section") {              
-            	input(name: "clearChildren", type: "bool", title: "Delete all child devices?\n\nPlease note: Devices must be removed from any smartApps BEFORE attempting to delete.")                      
+            	input(name: "refreshChildren", type: "bool", title: "Refresh all child devices?\n\nPLEASE NOTE:\nDevices must be removed from any smartApps BEFORE attempting to refresh as this process deletes and recreates them all.")                      
        }
     }
     
     tiles(scale: 2) {    	
 	multiAttributeTile(name: "switch", type: "lighting", width: 6, height: 4) {        	
 		tileAttribute ("fanMode", key: "PRIMARY_CONTROL") {			
-			attributeState "04", label:"HIGH", action:"off", icon:getIcon()+"fan4.png", backgroundColor:"#79b821", nextState: "turningOff"
-			attributeState "03", label:"MED-HI", action:"off", icon:getIcon()+"fan3.png", backgroundColor:"#79b821", nextState: "turningOff"
-			attributeState "02", label:"MED", action:"off", icon:getIcon()+"fan2.png", backgroundColor:"#79b821", nextState: "turningOff"
-			attributeState "01", label:"LOW", action:"off", icon:getIcon()+"fan1.png", backgroundColor:"#79b821", nextState: "turningOff"
-			attributeState "06", label:"BREEZE", action:"off", icon:getIcon()+"fan5.png", backgroundColor:"#008B64", nextState: "turningOff"
-        	attributeState "00", label:"FAN OFF", action:"on", icon:getIcon()+"fan0.png", backgroundColor:"#ffffff", nextState: "turningOn"
-			attributeState "turningOn", action:"on", label:"TURNING ON", icon:getIcon()+"fan00.png", backgroundColor:"#2179b8", nextState: "turningOn"
-			attributeState "turningOff", action:"off", label:"TURNING OFF", icon:getIcon()+"fan00.png", backgroundColor:"#2179b8", nextState: "turningOff"
+			attributeState "04", label:"HIGH", action:"off", icon:getIcon()+"fan4h.png", backgroundColor:"#79b821", nextState: "turningOff"
+			attributeState "03", label:"MED-HI", action:"off", icon:getIcon()+"fan3h.png", backgroundColor:"#79b821", nextState: "turningOff"
+			attributeState "02", label:"MED", action:"off", icon:getIcon()+"fan2h.png", backgroundColor:"#79b821", nextState: "turningOff"
+			attributeState "01", label:"LOW", action:"off", icon:getIcon()+"fan1h.png", backgroundColor:"#79b821", nextState: "turningOff"
+			attributeState "06", label:"BREEZE", action:"off", icon:getIcon()+"Breeze.png", backgroundColor:"#008B64", nextState: "turningOff"
+        	attributeState "00", label:"FAN OFF", action:"on", icon:getIcon()+"fan00h.png", backgroundColor:"#ffffff", nextState: "turningOn"
+			attributeState "turningOn", action:"on", label:"TURNING ON", icon:getIcon()+"fan0h.png", backgroundColor:"#2179b8", nextState: "turningOn"
+			attributeState "turningOff", action:"off", label:"TURNING OFF", icon:getIcon()+"fan0h.png", backgroundColor:"#2179b8", nextState: "turningOff"
         }  
         tileAttribute ("lightBrightness", key: "SLIDER_CONTROL") {
 			attributeState "lightBrightness", action:"lightLevel"
@@ -159,23 +159,24 @@ def getFanNameAbbr() {
 }
 
 def installed() {	
-	initialize()	
-}
-
-def updated() {	
 	initialize()
 }
 
+def updated() {	
+	initialize()    
+}
+
 def initialize() {	
-	log.info "Initializing"
-    if(clearChildren) {
-    	deleteChildren()        
-    }
-    else {
-		createFanChild()
-    	createLightChild()
-    } 
-    response(refresh() + configure())
+	log.info "Initializing"     
+       	if(refreshChildren) {        	
+            deleteChildren()            
+    		device.updateSetting("refreshChildren", false)            
+    	}
+    	else {
+			createFanChild()
+    		createLightChild()
+            response(refresh() + configure())
+    	}    	
 }
 
 def createFanChild() {
@@ -186,8 +187,7 @@ def createFanChild() {
         if (!childDevice && i != 5) {        
         	childDevice = addChildDevice("KOF Zigbee Fan Controller - Fan Speed Child Device", "${device.deviceNetworkId}-0${i}", null,[completedSetup: true,
             label: "${device.displayName} ${getFanName()["0${i}"]}", isComponent: true, componentName: "fanMode${i}",
-            componentLabel: "${getFanName()["0${i}"]}", "data":["speedVal":"0${i}","parent version":version()]])
-        	//response(refresh() + configure())
+            componentLabel: "${getFanName()["0${i}"]}", "data":["speedVal":"0${i}","parent version":version()]])        	
            	log.info "Creating child fan mode ${childDevice}"  
 		}
        	else {
@@ -203,8 +203,7 @@ def createLightChild() {
     if (!childDevice) {  
 		childDevice = addChildDevice("KOF Zigbee Fan Controller - Light Child Device", "${device.deviceNetworkId}-Lamp", null,[completedSetup: true,
         label: "${device.displayName} Lamp", isComponent: false, componentName: "fanLight",
-        componentLabel: "LAMP", "data":["parent version":version()]])
-        response(refresh() + configure())
+        componentLabel: "LAMP", "data":["parent version":version()]])       
         log.info "Creating child light ${childDevice}" 
     }
 	else {
@@ -212,14 +211,12 @@ def createLightChild() {
 	}	
 }
 
-def deleteChildren() {		    
-    	def children = getChildDevices()        	
-        children.each {child->
-        	deleteChildDevice(child.deviceNetworkId)
-        }
-		   	response(refresh() + configure())
-        	log.info "Deleting children"
-              
+def deleteChildren() {	
+	def children = getChildDevices()        	
+    children.each {child->
+  		deleteChildDevice(child.deviceNetworkId)
+    }	
+    log.info "Deleting children"                  
 }
 
 def configure() {
