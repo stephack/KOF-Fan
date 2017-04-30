@@ -52,14 +52,14 @@ metadata {
     tiles(scale: 2) {    	
 	multiAttributeTile(name: "switch", type: "lighting", width: 6, height: 4) {        	
 		tileAttribute ("fanMode", key: "PRIMARY_CONTROL") {			
-			attributeState "04", label:"HIGH", action:"off", icon:"https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed04.png", backgroundColor:"#79b821", nextState: "turningOff"
-			attributeState "03", label:"MED-HI", action:"off", icon:"https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed03.png", backgroundColor:"#79b821", nextState: "turningOff"
-			attributeState "02", label:"MED", action:"off", icon:"https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed02.png", backgroundColor:"#79b821", nextState: "turningOff"
-			attributeState "01", label:"LOW", action:"off", icon:"https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed01.png", backgroundColor:"#79b821", nextState: "turningOff"
-			attributeState "06", label:"BREEZE", action:"off", icon:"https://raw.githubusercontent.com/dcoffing/KOF-CeilingFan/master/resources/images/Breeze.png", backgroundColor:"#008B64", nextState: "turningOff"
-        	attributeState "00", label:"FAN OFF", action:"on", icon:"st.Lighting.light24", backgroundColor:"#ffffff", nextState: "turningOn"
-			attributeState "turningOn", action:"on", label:"TURNING ON", icon:"st.Lighting.light24", backgroundColor:"#2179b8", nextState: "turningOn"
-			attributeState "turningOff", action:"off", label:"TURNING OFF", icon:"st.Lighting.light24", backgroundColor:"#2179b8", nextState: "turningOff"
+			attributeState "04", label:"HIGH", action:"off", icon:getIcon()+"fan4.png", backgroundColor:"#79b821", nextState: "turningOff"
+			attributeState "03", label:"MED-HI", action:"off", icon:getIcon()+"fan3.png", backgroundColor:"#79b821", nextState: "turningOff"
+			attributeState "02", label:"MED", action:"off", icon:getIcon()+"fan2.png", backgroundColor:"#79b821", nextState: "turningOff"
+			attributeState "01", label:"LOW", action:"off", icon:getIcon()+"fan1.png", backgroundColor:"#79b821", nextState: "turningOff"
+			attributeState "06", label:"BREEZE", action:"off", icon:getIcon()+"fan5.png", backgroundColor:"#008B64", nextState: "turningOff"
+        	attributeState "00", label:"FAN OFF", action:"on", icon:getIcon()+"fan0.png", backgroundColor:"#ffffff", nextState: "turningOn"
+			attributeState "turningOn", action:"on", label:"TURNING ON", icon:getIcon()+"fan00.png", backgroundColor:"#2179b8", nextState: "turningOn"
+			attributeState "turningOff", action:"off", label:"TURNING OFF", icon:getIcon()+"fan00.png", backgroundColor:"#2179b8", nextState: "turningOff"
         }  
         tileAttribute ("lightBrightness", key: "SLIDER_CONTROL") {
 			attributeState "lightBrightness", action:"lightLevel"
@@ -126,6 +126,10 @@ def parse(String description) {
 			log.debug "Parse returned $map"            
 			return result 
     	}                
+}
+
+def getIcon() {
+	return "https://cdn.rawgit.com/dcoffing/KOF-CeilingFan/master/resources/images/"
 }
 
 def getFanName() { 
