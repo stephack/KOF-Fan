@@ -27,10 +27,10 @@ metadata {
 	tiles(scale: 2) { 		
         multiAttributeTile(name:"switch", type: "lighting", width: 6, height: 4, canChangeIcon: true) {
     		tileAttribute ("switch", key: "PRIMARY_CONTROL") {
-        		attributeState "off", label:"off", action: "on", icon: getIcon(), backgroundColor: "#ffffff", nextState: "turningOn"
-				attributeState "on", label: "on", action: "off", icon: getIcon(), backgroundColor: "#00A0DC", nextState: "turningOff"
-                attributeState "turningOn", label:"TURNING ON", action: "on", icon: getIcon(), backgroundColor: "#2179b8", nextState: "turningOn"
-            	attributeState "turningOff", label:"TURNING OFF", action:"off", icon: getIcon(), backgroundColor:"#2179b8", nextState: "turningOff"
+        		attributeState "off", label:"off", action: "on", icon: getIcon()+"light.png", backgroundColor: "#ffffff", nextState: "turningOn"
+				attributeState "on", label: "on", action: "off", icon: getIcon()+"lightH.png", backgroundColor: "#00A0DC", nextState: "turningOff"
+                attributeState "turningOn", label:"TURNING ON", action: "on", icon: getIcon()+"light.png", backgroundColor: "#2179b8", nextState: "turningOn"
+            	attributeState "turningOff", label:"TURNING OFF", action:"off", icon: getIcon()+"lightH.png", backgroundColor:"#2179b8", nextState: "turningOff"
         	}    	
     		tileAttribute ("device.level", key: "SLIDER_CONTROL") {
         		attributeState "level", action: "setLevel"
@@ -44,7 +44,7 @@ metadata {
 }
 
 def getIcon() {
-	return "https://raw.githubusercontent.com/dcoffing/KOF-CeilingFan/master/resources/images/lighth.png"
+	return "https://raw.githubusercontent.com/dcoffing/KOF-CeilingFan/master/resources/images/"
 }
 
 def on() {
