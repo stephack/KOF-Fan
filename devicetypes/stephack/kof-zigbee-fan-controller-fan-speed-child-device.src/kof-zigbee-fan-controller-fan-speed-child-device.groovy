@@ -36,16 +36,16 @@ metadata {
         standardTile("fanSpeed", "fanSpeed", width: 2, height: 2) {
      		state "off", label:"off", action: "on", icon: "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed00.png", backgroundColor: "#ffffff", nextState: "turningOn"
 			//state "default", label: "ADJUSTING", action: "on", icon: "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed04.png", backgroundColor: "#2179b8"
-            state "on01", label: "LOW", action: "off", icon: "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed01.png", backgroundColor: "#79b821", nextState: "off01"
-           	state "on02", label: "MED", action: "off", icon: "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed02.png", backgroundColor: "#79b821", nextState: "off02"
-			state "on03", label: "MED-HI", action: "off", icon: "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed03.png", backgroundColor: "#79b821", nextState: "off03"
-			state "on04", label: "HIGH", action: "off", icon: "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed04.png", backgroundColor: "#79b821", nextState: "off04"
+            state "on01", label: "LOW", action: "off", icon: getIcon()+"1.png", backgroundColor: "#79b821", nextState: "off01"
+           	state "on02", label: "MED", action: "off", icon: getIcon()+"2.png", backgroundColor: "#79b821", nextState: "off02"
+			state "on03", label: "MED-HI", action: "off", icon: getIcon()+"3.png", backgroundColor: "#79b821", nextState: "off03"
+			state "on04", label: "HIGH", action: "off", icon: getIcon()+"4.png", backgroundColor: "#79b821", nextState: "off04"
 			state "on06", label: "BREEZE", action: "off", icon: "https://raw.githubusercontent.com/dcoffing/KOF-CeilingFan/master/resources/images/Breeze.png", backgroundColor: "#79b821", nextState: "off06"
-			state "off01", label: "PUSH", action: "on", icon: "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed01.png", backgroundColor: "#ffffff", nextState: "on01"
-           	state "off02", label: "PUSH", action: "on", icon: "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed02.png", backgroundColor: "#ffffff", nextState: "on02"
-			state "off03", label: "PUSH", action: "on", icon: "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed03.png", backgroundColor: "#ffffff", nextState: "on03"
-			state "off04", label: "PUSH", action: "on", icon: "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed04.png", backgroundColor: "#ffffff", nextState: "on04"
-			state "off06", label: "PUSH", action: "on", icon: "https://raw.githubusercontent.com/dcoffing/KOF-CeilingFan/master/resources/images/Breeze.png", backgroundColor: "#ffffff", nextState: "on06"
+			state "off01", label: "PUSH", action: "on", icon: getIcon()+"1.png", backgroundColor: "#ffffff", nextState: "on01"
+           	state "off02", label: "PUSH", action: "on", icon: getIcon()+"2.png", backgroundColor: "#ffffff", nextState: "on02"
+			state "off03", label: "PUSH", action: "on", icon: getIcon()+"3.png", backgroundColor: "#ffffff", nextState: "on03"
+			state "off04", label: "PUSH", action: "on", icon: getIcon()+"4.png", backgroundColor: "#ffffff", nextState: "on04"
+			state "off06", label: "PUSH", action: "on", icon: getIcon()+"5.png", backgroundColor: "#ffffff", nextState: "on06"
         	//state "turningOn", label:"ADJUSTING", action: "on", icon: "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed00.png", backgroundColor: "#2179b8", nextState: "turningOn"
             //state "turningOff", label:"TURNING OFF", action:"off", icon: "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed04.png", backgroundColor:"#2179b8", nextState: "turningOff"
 		}
@@ -56,9 +56,10 @@ metadata {
 	}
 }
 
-//def getIcon() {
-//	return "https://raw.githubusercontent.com/dcoffing/KOF-CeilingFan/master/resources/images/Fan.png"
-//}
+def getIcon() {
+	return "https://cdn.rawgit.com/dcoffing/KOF-CeilingFan/master/resources/images/fan"
+    //return "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed0"
+}
 
 def off() {
 	parent.off()  
