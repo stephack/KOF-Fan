@@ -40,7 +40,7 @@ metadata {
            	state "on02", label: "MED", action: "off", icon: getIcon()+"fan2h.png", backgroundColor: "#79b821", nextState: "turningOff"
 			state "on03", label: "MED-HI", action: "off", icon: getIcon()+"fan3h.png", backgroundColor: "#79b821", nextState: "turningOff"
 			state "on04", label: "HIGH", action: "off", icon: getIcon()+"fan4h.png", backgroundColor: "#79b821", nextState: "turningOff"
-			state "on06", label: "BREEZE", action: "off", icon: getIcon()+"breeze4h_blk.png", backgroundColor: "#79b821", nextState: "turningOff"
+			state "on06", label: "BREEZE", action: "off", icon: getIcon()+"breeze4h_teal.png", backgroundColor: "#79b821", nextState: "turningOff"
 			state "off01", label: "PUSH", action: "on", icon: getIcon()+"fan1h_grey.png", backgroundColor: "#ffffff", nextState: "turningOn"
            	state "off02", label: "PUSH", action: "on", icon: getIcon()+"fan2h_grey.png", backgroundColor: "#ffffff", nextState: "turningOn"
 			state "off03", label: "PUSH", action: "on", icon: getIcon()+"fan3h_grey.png", backgroundColor: "#ffffff", nextState: "turningOn"
