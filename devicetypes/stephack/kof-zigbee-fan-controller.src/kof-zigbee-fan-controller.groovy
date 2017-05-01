@@ -15,7 +15,7 @@
  *  for the specific language governing permissions and limitations under the License.
  *
  */
-def version() {return "v0.2.1.20170428" }
+def version() {return "v0.2.1.20170430" }
 
 metadata {
 	definition (name: "KOF Zigbee Fan Controller", namespace: "stephack", author: "Stephan Hackett, Ranga Pedamallu, Dale Coffing") {
@@ -57,7 +57,7 @@ metadata {
 			attributeState "02", label:"MED", action:"off", icon:getIcon()+"fan2h.png", backgroundColor:"#79b821", nextState: "turningOff"
 			attributeState "01", label:"LOW", action:"off", icon:getIcon()+"fan1h.png", backgroundColor:"#79b821", nextState: "turningOff"
 			attributeState "06", label:"BREEZE", action:"off", icon:getIcon()+"Breeze.png", backgroundColor:"#008B64", nextState: "turningOff"
-        	attributeState "00", label:"FAN OFF", action:"on", icon:getIcon()+"fan00h.png", backgroundColor:"#ffffff", nextState: "turningOn"
+        	attributeState "00", label:"FAN OFF", action:"on", icon:getIcon()+"fan00h_grey.png", backgroundColor:"#ffffff", nextState: "turningOn"
 			attributeState "turningOn", action:"on", label:"TURNING ON", icon:getIcon()+"fan0h.png", backgroundColor:"#2179b8", nextState: "turningOn"
 			attributeState "turningOff", action:"off", label:"TURNING OFF", icon:getIcon()+"fan0h.png", backgroundColor:"#2179b8", nextState: "turningOff"
         }  
