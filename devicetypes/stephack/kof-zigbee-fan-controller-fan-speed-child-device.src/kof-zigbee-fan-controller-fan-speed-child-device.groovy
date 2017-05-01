@@ -13,7 +13,7 @@
  *  for the specific language governing permissions and limitations under the License.
  *
  */
-def version() {return "v0.2.1.20170427"}
+def version() {return "v0.2.1.20170430"}
 
 metadata {
 	definition (name: "KOF Zigbee Fan Controller - Fan Speed Child Device", namespace: "stephack", author: "Stephan Hackett") {
@@ -34,18 +34,18 @@ metadata {
            // state "turningOff", label:"TURNING OFF", action:"off", icon: getIcon(), backgroundColor:"#2179b8", nextState: "turningOff"
 		//}
         standardTile("fanSpeed", "fanSpeed", width: 2, height: 2) {
-     		state "off", label:"off", action: "on", icon: "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed00.png", backgroundColor: "#ffffff", nextState: "turningOn"
+     		//state "off", label:"off", action: "on", icon: "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed00.png", backgroundColor: "#ffffff", nextState: "turningOn"
 			//state "default", label: "ADJUSTING", action: "on", icon: "https://cdn.rawgit.com/stephack/KOF-Fan/master/resources/images/fanspeed04.png", backgroundColor: "#2179b8"
             state "on01", label: "LOW", action: "off", icon: getIcon()+"fan1h.png", backgroundColor: "#79b821", nextState: "turningOff"
            	state "on02", label: "MED", action: "off", icon: getIcon()+"fan2h.png", backgroundColor: "#79b821", nextState: "turningOff"
 			state "on03", label: "MED-HI", action: "off", icon: getIcon()+"fan3h.png", backgroundColor: "#79b821", nextState: "turningOff"
 			state "on04", label: "HIGH", action: "off", icon: getIcon()+"fan4h.png", backgroundColor: "#79b821", nextState: "turningOff"
-			state "on06", label: "BREEZE", action: "off", icon: getIcon()+"Breeze.png", backgroundColor: "#79b821", nextState: "turningOff"
-			state "off01", label: "PUSH", action: "on", icon: getIcon()+"fan1h.png", backgroundColor: "#ffffff", nextState: "turningOn"
-           	state "off02", label: "PUSH", action: "on", icon: getIcon()+"fan2h.png", backgroundColor: "#ffffff", nextState: "turningOn"
-			state "off03", label: "PUSH", action: "on", icon: getIcon()+"fan3h.png", backgroundColor: "#ffffff", nextState: "turningOn"
-			state "off04", label: "PUSH", action: "on", icon: getIcon()+"fan4h.png", backgroundColor: "#ffffff", nextState: "turningOn"
-			state "off06", label: "PUSH", action: "on", icon: getIcon()+"Breeze.png", backgroundColor: "#ffffff", nextState: "turningOn"
+			state "on06", label: "BREEZE", action: "off", icon: getIcon()+"breeze4h_blk.png", backgroundColor: "#79b821", nextState: "turningOff"
+			state "off01", label: "PUSH", action: "on", icon: getIcon()+"fan1h_grey.png", backgroundColor: "#ffffff", nextState: "turningOn"
+           	state "off02", label: "PUSH", action: "on", icon: getIcon()+"fan2h_grey.png", backgroundColor: "#ffffff", nextState: "turningOn"
+			state "off03", label: "PUSH", action: "on", icon: getIcon()+"fan3h_grey.png", backgroundColor: "#ffffff", nextState: "turningOn"
+			state "off04", label: "PUSH", action: "on", icon: getIcon()+"fan4h_grey.png", backgroundColor: "#ffffff", nextState: "turningOn"
+			state "off06", label: "PUSH", action: "on", icon: getIcon()+"breeze4h_grey.png", backgroundColor: "#ffffff", nextState: "turningOn"
         	state "turningOn", label:"ADJUSTING", action: "on", icon: getIcon()+"fan0h.png", backgroundColor: "#2179b8", nextState: "turningOn"
             state "turningOff", label:"TURNING OFF", action:"off", icon: getIcon()+"fan0h.png", backgroundColor:"#2179b8", nextState: "turningOff"
 		}
