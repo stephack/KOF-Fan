@@ -15,7 +15,7 @@
  *  for the specific language governing permissions and limitations under the License.
  *
  */
-def version() {return "v0.2.1.20170431" }
+def version() {return "v0.2.1.20170432" }
 
 metadata {
 	definition (name: "KOF Zigbee Fan Controller", namespace: "stephack", author: "Stephan Hackett, Ranga Pedamallu, Dale Coffing") {
